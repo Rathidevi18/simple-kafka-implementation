@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bid Application</title>
+    <script>
+        async function fetchHighestBid() {
+            try {
+                const response = await fetch('/highest_bid');
+                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                const data = await response.json();
+                document.getElementById('highest-bid').textContent = `Highest Bid: ${data.highest_bid}`;
+            } catch (error) {
+                document.getElementById('highest-bid').textContent = `Highest Bid: Error fetching data`;
+                console.error('Error fetching highest bid:', error);
+            }
+        }
+
+        async function submitBid(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const price = document.getElementById('price').value;
+            try {
+                const response = await fetch('/submit_bid', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, price: parseInt(price) })
+                });
+                if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
+                const data = await response.json();
+                alert(data.message);
+                fetchHighestBid();
+            } catch (error) {
+                alert('Failed to submit bid: ' + error.message);
+                console.error('Error submitting bid:', error);
+            }
+        }
+
+        window.onload = fetchHighestBid;
+    </script>
+</head>
+<body>
+    <h1>Bid Application</h1>
+    <p id="highest-bid">Highest Bid: Loading...</p>
+    <form onsubmit="submitBid(event)">
+        <label for="name">Name</label>
+        <input type="text" id="name" required>
+        <label for="price">Bid Price</label>
+        <input type="number" id="price" required>
+        <button type="submit">Place Bid</button>
+    </form>
+</body>
+</html>
