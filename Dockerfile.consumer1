@@ -1,6 +1,0 @@
-FROM python:3.10
-WORKDIR /app
-COPY to_postgres.py .
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-CMD ["python", "to_postgres.py"]
